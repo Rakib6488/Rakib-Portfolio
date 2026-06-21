@@ -8,8 +8,7 @@ function navigateToSection(targetId) {
 
   const matchedSection = document.querySelector(targetId);
   if (!matchedSection) return;
-  
-  // প্রতিটি সেকশনকে হাইড বা শো করা
+
   sections.forEach(section => {
     if ('#' + section.id === targetId) {
       section.classList.remove('hidden');
@@ -18,7 +17,6 @@ function navigateToSection(targetId) {
     }
   });
 
-  // মেনুবারের একটিভ ক্লাস আপডেট করা
   document.querySelectorAll('.nav-links a').forEach(link => {
     if (link.getAttribute('href') === targetId) {
       link.classList.add('active');
@@ -27,7 +25,6 @@ function navigateToSection(targetId) {
     }
   });
 
-  // সেকশন বদলানোর পর পেজের একদম উপরে স্ক্রল করা
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -35,12 +32,25 @@ function handleHashChange() {
   navigateToSection(window.location.hash || '#hero');
 }
 
-// ক্লিক ইভেন্ট লিসেনার সেটআপ করা
+function getCleanHomeUrl() {
+  return window.location.pathname + window.location.search;
+}
+
 document.body.addEventListener('click', (e) => {
   const target = e.target.closest('a');
-  if (target && target.getAttribute('href') && target.getAttribute('href').startsWith('#')) {
+  if (!target) return;
+
+  const href = target.getAttribute('href');
+
+  if (target.classList.contains('nav-logo')) {
     e.preventDefault();
-    const href = target.getAttribute('href');
+    history.pushState(null, '', getCleanHomeUrl());
+    navigateToSection('#hero');
+    return;
+  }
+
+  if (href && href.startsWith('#')) {
+    e.preventDefault();
     history.pushState(null, '', href);
     navigateToSection(href);
   }
